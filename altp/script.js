@@ -125,13 +125,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const prizeMoney = [100, 200, 300, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 125000, 250000, 500000, 1000000];
     let currentQuestionIndex = 0;
     let currentPrizeIndex = 0;
+    let highScore = localStorage.getItem('highScore') || 0;
 
     const questionContainer = document.getElementById('question-container');
     const questionElement = document.getElementById('question');
     const optionsButtons = document.querySelectorAll('.option');
     const messageElement = document.getElementById('message');
     const startButton = document.getElementById('start-button');
-//giao diện startgame
+    const highScoreElement = document.getElementById('high-score');
+
+    highScoreElement.textContent = highScore;
+
     function startGame() {
         currentQuestionIndex = 0;
         currentPrizeIndex = 0;
@@ -139,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         startButton.style.display = 'none';
         showNextQuestion();
     }
-//hiển thị các câu hỏi và hiển thị
+
     function showNextQuestion() {
         if (currentQuestionIndex < questions.length) {
             const question = questions[currentQuestionIndex];
@@ -154,9 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
             messageElement.textContent = 'Chúc mừng! Bạn đã trả lời đúng tất cả các câu hỏi và giành được 1.000.000$!';
             startButton.textContent = 'Chơi lại';
             startButton.style.display = 'inline-block';
+            updateHighScore(currentPrizeIndex);
         }
     }
-//Chọn câu tra lơời đúngg
+
     function selectAnswer(e) {
         const selectedButton = e.target;
         const selectedOption = selectedButton.getAttribute('data-option');
@@ -171,6 +176,15 @@ document.addEventListener('DOMContentLoaded', () => {
             messageElement.textContent = `Sai rồi! Đáp án đúng là ${question.answer}. Bạn giành được ${currentPrizeIndex > 0 ? prizeMoney[currentPrizeIndex - 1] : 0}$.`;
             startButton.textContent = 'Chơi lại';
             startButton.style.display = 'inline-block';
+            updateHighScore(currentPrizeIndex - 1);
+        }
+    }
+
+    function updateHighScore(score) {
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+            highScoreElement.textContent = highScore;
         }
     }
 
@@ -180,5 +194,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     startButton.addEventListener('click', startGame);
 
-    startButton.style.display = 'inline-block';  // Display the start button initially
+    startButton.style.display = 'inline-block';
 });
